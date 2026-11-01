@@ -27,10 +27,15 @@ export default function NoteList({ notes }: NoteListProps) {
           <h2 className={styles.title}>{note.title}</h2>
           <p className={styles.content}>{note.content}</p>
           <p className={styles.tag}>{note.tag}</p>
+
           <div className={styles.actions}>
-            <Link href={`/notes/${note.id}`} className={styles.details}>
+            <Link
+              href={`/notes/(..)notes/${note.id}`}
+              className={styles.details}
+            >
               View details
             </Link>
+
             <button
               className={styles.delete}
               onClick={() => mutation.mutate(note.id)}

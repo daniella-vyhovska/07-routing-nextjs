@@ -11,9 +11,6 @@ const api = axios.create({
   },
 });
 
-// -----------------------------
-// Типи відповіді API
-// -----------------------------
 export interface FetchNotesResponse {
   notes: Note[];
   totalPages: number;
@@ -24,42 +21,39 @@ export interface CreateNotePayload {
   content: string;
 }
 
-// -----------------------------
-// GET — отримати список нотаток
-// -----------------------------
+// 🟢 ОНОВЛЕНА ФУНКЦІЯ — тепер приймає tag
 export async function fetchNotes(
   page: number,
-  search: string
+  search: string,
+  tag?: string
 ): Promise<FetchNotesResponse> {
-  const response = await api.get<FetchNotesResponse>("", {
-    params: {
-      page,
-      ...(search ? { search } : {}),
-    },
-  });
+  const params: Record<string, string | number> = {
+    page,
+  };
 
+  if (search) {
+    params.search = search;
+  }
+
+  // ВАЖЛИВО: бекенд НЕ очікує tag="all"
+  if (tag && tag !== "all") {
+    params.tag = tag;
+  }
+
+  const response = await api.get<FetchNotesResponse>("", { params });
   return response.data;
 }
 
-// -----------------------------
-// GET — отримати нотатку за ID
-// -----------------------------
 export async function fetchNoteById(id: string): Promise<Note> {
   const response = await api.get<Note>(`/${id}`);
   return response.data;
 }
 
-// -----------------------------
-// POST — створити нотатку
-// -----------------------------
 export async function createNote(payload: CreateNotePayload): Promise<Note> {
   const response = await api.post<Note>("", payload);
   return response.data;
 }
 
-// -----------------------------
-// DELETE — видалити нотатку
-// -----------------------------
 export async function deleteNote(id: string): Promise<Note> {
   const response = await api.delete<Note>(`/${id}`);
   return response.data;
